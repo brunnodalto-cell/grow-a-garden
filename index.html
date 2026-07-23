@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grow A Garden 2 - Loja</title>
+
+<title>Grow A Garden 2 Loja</title>
 
 <style>
 body{
     margin:0;
-    font-family:Arial, sans-serif;
-    background:#0f172a;
-    color:#fff;
+    font-family:Arial,sans-serif;
+    background:#0b1220;
+    color:white;
 }
 
 header{
@@ -19,117 +20,177 @@ header{
     text-align:center;
 }
 
-header h1{
-    margin:0;
-}
-
 .container{
     max-width:900px;
-    margin:20px auto;
+    margin:auto;
     padding:15px;
 }
 
 .produto{
     background:#1e293b;
-    border-radius:12px;
     padding:15px;
-    margin-bottom:15px;
+    border-radius:15px;
+    margin:15px 0;
 }
 
 .produto h2{
-    margin:0 0 10px;
-    color:#22c55e;
+    color:#4ade80;
 }
 
 .preco{
-    font-size:22px;
     color:#facc15;
+    font-size:22px;
     font-weight:bold;
 }
 
-.botao{
-    display:inline-block;
-    margin-top:10px;
-    background:#25D366;
+button{
+    background:#22c55e;
+    border:none;
     color:white;
-    text-decoration:none;
-    padding:10px 20px;
+    padding:12px;
     border-radius:8px;
-    font-weight:bold;
+    width:100%;
+    font-size:16px;
+    margin-top:10px;
+}
+
+input, select{
+    width:100%;
+    padding:10px;
+    margin-top:8px;
+    border-radius:8px;
+    border:none;
+}
+
+#pix{
+    background:#111827;
+    padding:15px;
+    border-radius:10px;
+    margin-top:20px;
 }
 
 footer{
     text-align:center;
     padding:20px;
-    background:#111827;
-    margin-top:20px;
 }
 </style>
+
 </head>
 
 <body>
 
 <header>
 <h1>🌱 Grow A Garden 2</h1>
-<p>Itens disponíveis</p>
+<p>Loja de itens</p>
 </header>
 
-<div class="container">
+<div class="container"><div class="produto">
+<h2>Escolha seu item</h2>
 
-<div class="produto">
-<h2>Moon Blom</h2>
-<p class="preco">R$ 1,00</p>
-<a class="botao" href="https://wa.me/5517996377365">Comprar</a>
+<select id="item" onchange="calcular()">
+<option value="Moon Blom" data-preco="1">Moon Blom - R$1,00</option>
+<option value="Sun Blon" data-preco="2">Sun Blon - R$2,00</option>
+<option value="Dragon Breath" data-preco="1">Dragon Breath - R$1,00</option>
+<option value="Star Fruit" data-preco="4">Star Fruit - R$4,00</option>
+<option value="Ghost Pepper" data-preco="1">Ghost Pepper - R$1,00</option>
+<option value="Hipno Blom" data-preco="1">Hipno Blom - R$1,00</option>
+<option value="1000 Bamboo" data-preco="1">1000 Bamboo - R$1,00</option>
+<option value="Pet Racoon" data-preco="8">Pet Racoon - R$8,00</option>
+</select>
+
+<h3>Quantidade:</h3>
+
+<input type="number" id="quantidade" value="1" min="1" onchange="calcular()">
+
+<h2>Total:</h2>
+<p class="preco" id="total">R$ 1,00</p>
+
 </div>
 
-<div class="produto">
-<h2>Sun Blon</h2>
-<p class="preco">R$ 2,00</p>
-<a class="botao" href="https://wa.me/5517996377365">Comprar</a>
-</div>
 
-<div class="produto">
-<h2>Dragon Breath</h2>
-<p class="preco">R$ 1,00</p>
-<a class="botao" href="https://wa.me/5517996377365">Comprar</a>
-</div>
+<div id="pix">
 
-<div class="produto">
-<h2>Star Fruit</h2>
-<p class="preco">R$ 4,00</p>
-<a class="botao" href="https://wa.me/5517996377365">Comprar</a>
-</div>
+<h2>💳 Pagamento Pix</h2>
 
-<div class="produto">
-<h2>Ghost Pepper</h2>
-<p class="preco">R$ 1,00</p>
-<a class="botao" href="https://wa.me/5517996377365">Comprar</a>
-</div>
+<p>Envie o Pix para:</p>
 
-<div class="produto">
-<h2>Hipno Blom</h2>
-<p class="preco">R$ 1,00</p>
-<a class="botao" href="https://wa.me/5517996377365">Comprar</a>
-</div>
+<b id="chavepix">47609570818</b>
 
-<div class="produto">
-<h2>1000 Bamboo</h2>
-<p class="preco">R$ 1,00</p>
-<a class="botao" href="https://wa.me/5517996377365">Comprar</a>
-</div>
+<button onclick="copiarPix()">
+Copiar Pix
+</button>
 
-<div class="produto">
-<h2>Pet Racoon</h2>
-<p class="preco">R$ 8,00</p>
-<a class="botao" href="https://wa.me/5517996377365">Comprar</a>
-</div>
+<p>Depois de pagar, clique abaixo para enviar o pedido.</p>
+
+<button onclick="pedido()">
+Finalizar compra pelo WhatsApp
+</button>
+
+</div><script>
+
+function calcular(){
+
+let item = document.getElementById("item");
+let preco = item.options[item.selectedIndex].getAttribute("data-preco");
+
+let quantidade = document.getElementById("quantidade").value;
+
+let total = preco * quantidade;
+
+document.getElementById("total").innerHTML =
+"R$ " + total.toFixed(2).replace(".", ",");
+
+}
+
+
+function copiarPix(){
+
+let pix = "47609570818";
+
+navigator.clipboard.writeText(pix);
+
+alert("Pix copiado!");
+
+}
+
+
+function pedido(){
+
+let item = document.getElementById("item").value;
+
+let preco = document.getElementById("item")
+.options[document.getElementById("item").selectedIndex]
+.getAttribute("data-preco");
+
+let quantidade = document.getElementById("quantidade").value;
+
+let total = preco * quantidade;
+
+
+let mensagem =
+"🌱 NOVO PEDIDO - GROW A GARDEN 2%0A%0A" +
+"Item: " + item + "%0A" +
+"Quantidade: " + quantidade + "%0A" +
+"Total: R$ " + total.toFixed(2).replace(".", ",") +
+"%0A%0ACliente enviou o Pix.";
+
+
+window.open(
+"https://wa.me/5517996377365?text=" + mensagem
+);
+
+}
+
+calcular();
+
+</script>
+
 
 </div>
 
 <footer>
-<h3>📱 Contato</h3>
 <p>WhatsApp: +55 17 99637-7365</p>
-<p>© 2026 Grow A Garden 2</p>
+<p>© Grow A Garden 2 Loja</p>
 </footer>
 
 </body>
