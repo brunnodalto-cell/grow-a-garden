@@ -1,490 +1,507 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Grow A Garden 2 Loja</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<title>City Runner</title>
 
 <style>
-
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Poppins,sans-serif;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
 body{
+    overflow:hidden;
+    background:#111;
+    font-family:Arial;
+}
 
-background:linear-gradient(180deg,#08130d,#10231b,#07110c);
+#game{
+    width:100vw;
+    height:100vh;
+    background:linear-gradient(#4fc3f7,#90caf9);
+    position:relative;
+    overflow:hidden;
+}
 
-color:white;
+#score{
+    position:absolute;
+    top:20px;
+    left:20px;
+    color:white;
+    font-size:25px;
+    z-index:10;
+}
+
+#road{
+    position:absolute;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    width:350px;
+    height:100%;
+    background:#333;
+}
+
+.lane{
+    position:absolute;
+    height:100%;
+    width:3px;
+    background:#aaa;
+}
+
+#lane1{left:33%;}
+#lane2{left:66%;}
+
+#player{
+    position:absolute;
+    bottom:80px;
+    left:50%;
+    transform:translateX(-50%);
+    width:50px;
+    height:80px;
+    background:#ff5252;
+    border-radius:15px;
+}
+
+.coin{
+    position:absolute;
+    width:25px;
+    height:25px;
+    background:gold;
+    border-radius:50%;
+}
+
+.obstacle{
+    position:absolute;
+    width:50px;
+    height:60px;
+    background:#222;
+    border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+<div id="score">Pontos: 0</div>
+
+<div id="road">
+<div class="lane" id="lane1"></div>
+<div class="lane" id="lane2"></div>
+</div>
+
+<div id="player"></div>
+
+</div>
+
+<script>
+
+let player=document.getElementById("player");
+let scoreText=document.getElementById("score");
+
+let lane=1;
+let score=0;
+
+let positions=[
+"25%",
+"50%",
+"75%"
+];
+
+document.addEventListener("keydown",e=>{
+    if(e.key==="ArrowLeft" && lane>0){
+        lane--;
+    }
+
+    if(e.key==="ArrowRight" && lane<2){
+        lane++;
+    }
+
+    player.style.left=positions[lane];
+});
+
+
+</script>
+
+</body>
+</html>// Movimento automático do jogo
+
+let game=document.getElementById("game");
+
+let playerY=80;
+let jumping=false;
+
+function criarMoeda(){
+
+    let coin=document.createElement("div");
+    coin.className="coin";
+
+    let pista=Math.floor(Math.random()*3);
+    coin.style.left=positions[pista];
+    coin.style.top="-30px";
+
+    game.appendChild(coin);
+
+    let movimento=setInterval(()=>{
+
+        let y=coin.offsetTop;
+        coin.style.top=(y+6)+"px";
+
+        if(y>window.innerHeight){
+            coin.remove();
+            clearInterval(movimento);
+        }
+
+        let p=player.getBoundingClientRect();
+        let c=coin.getBoundingClientRect();
+
+        if(
+            p.left<c.right &&
+            p.right>c.left &&
+            p.top<c.bottom &&
+            p.bottom>c.top
+        ){
+            score+=10;
+            scoreText.innerHTML="Pontos: "+score;
+            coin.remove();
+            clearInterval(movimento);
+        }
+
+    },30);
+}
+
+
+function criarObstaculo(){
+
+    let obs=document.createElement("div");
+    obs.className="obstacle";
+
+    let pista=Math.floor(Math.random()*3);
+    obs.style.left=positions[pista];
+    obs.style.top="-80px";
+
+    game.appendChild(obs);
+
+
+    let movimento=setInterval(()=>{
+
+        let y=obs.offsetTop;
+        obs.style.top=(y+7)+"px";
+
+
+        if(y>window.innerHeight){
+            obs.remove();
+            clearInterval(movimento);
+        }
+
+
+        let p=player.getBoundingClientRect();
+        let o=obs.getBoundingClientRect();
+
+
+        if(
+            p.left<o.right &&
+            p.right>o.left &&
+            p.top<o.bottom &&
+            p.bottom>o.top
+        ){
+
+            alert("Fim de jogo! Pontos: "+score);
+            location.reload();
+
+        }
+
+    },30);
 
 }
 
-header{
 
-background:#16a34a;
+// criar objetos
 
-padding:25px;
+setInterval(criarMoeda,1200);
+setInterval(criarObstaculo,1800);
 
-text-align:center;
 
-box-shadow:0 0 20px #16a34a;
+// pulo
+
+document.addEventListener("keydown",e=>{
+
+    if(e.key==="ArrowUp" && !jumping){
+
+        jumping=true;
+        player.style.bottom="200px";
+
+        setTimeout(()=>{
+
+            player.style.bottom="80px";
+            jumping=false;
+
+        },600);
+    }
+
+});// CONTROLES DE CELULAR
+
+let toqueInicioX = 0;
+let toqueInicioY = 0;
+
+document.addEventListener("touchstart", e=>{
+
+    toqueInicioX = e.touches[0].clientX;
+    toqueInicioY = e.touches[0].clientY;
+
+});
+
+
+document.addEventListener("touchend", e=>{
+
+    let fimX = e.changedTouches[0].clientX;
+    let fimY = e.changedTouches[0].clientY;
+
+
+    let distanciaX = fimX - toqueInicioX;
+    let distanciaY = fimY - toqueInicioY;
+
+
+    // esquerda
+    if(distanciaX < -50 && lane > 0){
+
+        lane--;
+        player.style.left=positions[lane];
+
+    }
+
+
+    // direita
+    if(distanciaX > 50 && lane < 2){
+
+        lane++;
+        player.style.left=positions[lane];
+
+    }
+
+
+    // pulo
+    if(distanciaY < -50 && !jumping){
+
+        jumping=true;
+
+        player.style.bottom="200px";
+
+
+        setTimeout(()=>{
+
+            player.style.bottom="80px";
+            jumping=false;
+
+        },600);
+
+    }
+
+});
+
+
+// animação simples do personagem
+
+let animacao=false;
+
+setInterval(()=>{
+
+    animacao=!animacao;
+
+    if(animacao){
+
+        player.style.height="90px";
+
+    }else{
+
+        player.style.height="80px";
+
+    }
+
+},200);<div id="menu">
+    <h1>City Runner</h1>
+    <button onclick="iniciar()">JOGAR</button>
+    <p id="melhor">Recorde: 0</p>
+</div>
+
+<style>
+#menu{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.7);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    z-index:20;
+}
+
+#menu h1{
+    font-size:45px;
+    margin-bottom:30px;
+}
+
+#menu button{
+    padding:15px 50px;
+    font-size:25px;
+    border:0;
+    border-radius:15px;
+    background:#00e676;
+    cursor:pointer;
+}
+</style>
+
+<script>
+
+let jogando=false;
+
+let recorde=localStorage.getItem("recorde") || 0;
+
+document.getElementById("melhor").innerHTML=
+"Recorde: "+recorde;
+
+
+function iniciar(){
+
+    document.getElementById("menu").style.display="none";
+    jogando=true;
 
 }
 
-header h1{
 
-font-size:35px;
+setInterval(()=>{
 
+    if(jogando){
+
+        score++;
+
+        scoreText.innerHTML="Pontos: "+score;
+
+
+        if(score>recorde){
+
+            recorde=score;
+
+            localStorage.setItem("recorde",recorde);
+
+        }
+
+    }
+
+},1000);
+
+</script><div id="city"></div>
+
+<style>
+
+#city{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    overflow:hidden;
 }
 
-header p{
-
-margin-top:10px;
-
-opacity:.9;
-
+.building{
+    position:absolute;
+    bottom:0;
+    width:70px;
+    height:180px;
+    background:#555;
+    animation:moveCity 5s linear infinite;
 }
 
-.banner{
-
-margin:25px;
-
-padding:25px;
-
-border-radius:20px;
-
-background:linear-gradient(135deg,#22c55e,#15803d);
-
-text-align:center;
-
-box-shadow:0 0 25px rgba(0,0,0,.4);
-
-}
-
-.banner h2{
-
-font-size:30px;
-
-margin-bottom:15px;
-
-}
-
-.banner p{
-
-font-size:18px;
-
-line-height:28px;
-
-}
-
-.container{
-
-width:95%;
-
-max-width:1100px;
-
-margin:auto;
-
-padding-bottom:30px;
-
-}
-
-.card{
-
-background:#14251b;
-
-border-radius:18px;
-
-padding:20px;
-
-margin-top:20px;
-
-box-shadow:0 0 20px rgba(0,0,0,.4);
-
-transition:.3s;
-
-}
-
-.card:hover{
-
-transform:scale(1.02);
-
-}
-
-.nome{
-
-font-size:24px;
-
-font-weight:bold;
-
-color:#4ade80;
-
-}
-
-.preco{
-
-font-size:28px;
-
-color:#facc15;
-
-margin-top:10px;
-
-font-weight:bold;
-
-}
-
-select,input{
-
-width:100%;
-
-padding:14px;
-
-margin-top:15px;
-
-border:none;
-
-border-radius:12px;
-
-font-size:18px;
-
-}
-
-.botao{
-
-margin-top:15px;
-
-background:#22c55e;
-
-padding:15px;
-
-border-radius:12px;
-
-text-align:center;
-
-cursor:pointer;
-
-font-size:18px;
-
-font-weight:bold;
-
-transition:.3s;
-
-}
-
-.botao:hover{
-
-background:#16a34a;
-
-}
-
-.pix{
-
-background:#0f1f17;
-
-padding:20px;
-
-margin-top:25px;
-
-border-radius:18px;
-
-border:2px solid #22c55e;
-
-}
-
-.aviso{
-
-margin-top:20px;
-
-background:#facc15;
-
-color:black;
-
-padding:18px;
-
-border-radius:15px;
-
-font-weight:bold;
-
-font-size:18px;
-
-text-align:center;
-
-}
-
-footer{
-
-margin-top:40px;
-
-padding:25px;
-
-text-align:center;
-
-background:#111;
-
-}
-
-.whatsapp{
-
-position:fixed;
-
-bottom:20px;
-
-right:20px;
-
-background:#25D366;
-
-width:65px;
-
-height:65px;
-
-border-radius:50%;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-font-size:34px;
-
-text-decoration:none;
-
-color:white;
-
-box-shadow:0 0 20px black;
+@keyframes moveCity{
+
+    from{
+        transform:translateY(0);
+    }
+
+    to{
+        transform:translateY(100px);
+    }
 
 }
 
 </style>
 
-</head>
+<script>
 
-<body>
+function criarPredio(){
 
-<header>
+    let predio=document.createElement("div");
 
-<h1>🌱 Grow A Garden 2</h1>
+    predio.className="building";
 
-<p>Loja Gamer • Entrega Rápida • Pix</p>
+    predio.style.left=Math.random()*100+"%";
 
-</header>
+    predio.style.height=
+    (100+Math.random()*200)+"px";
 
-<div class="banner">
 
-<h2>🔥 Loja Oficial Grow A Garden 2 🔥</h2>
+    document.getElementById("city")
+    .appendChild(predio);
 
-<p>
 
-Itens raros com entrega rápida.<br>
+    setTimeout(()=>{
 
-Escolha a quantidade, faça o Pix e fale comigo no WhatsApp para receber seu pedido.
+        predio.remove();
 
-</p>
-
-</div>
-
-<div class="container"><div class="card">
-
-<h2>🛒 Comprar Itens</h2>
-
-<label><b>Escolha o item:</b></label>
-
-<select id="item" onchange="calcular()">
-
-<option value="Moon Blom" data-preco="1">🌙 Moon Blom — R$1,00</option>
-
-<option value="Sun Blon" data-preco="2">☀️ Sun Blon — R$2,00</option>
-
-<option value="Dragon Breath" data-preco="1">🐉 Dragon Breath — R$1,00</option>
-
-<option value="Star Fruit" data-preco="4">⭐ Star Fruit — R$4,00</option>
-
-<option value="Ghost Pepper" data-preco="1">🌶️ Ghost Pepper — R$1,00</option>
-
-<option value="Hipno Blom" data-preco="1">🌀 Hipno Blom — R$1,00</option>
-
-<option value="1000 Bamboo" data-preco="1">🎋 1000 Bamboo — R$1,00</option>
-
-<option value="Pet Racoon" data-preco="8">🦝 Pet Racoon — R$8,00</option>
-
-</select>
-
-<label><b>Quantidade:</b></label>
-
-<input
-type="number"
-id="quantidade"
-value="1"
-min="1"
-oninput="calcular()">
-
-<h2 style="margin-top:20px;">
-💰 Valor Total:
-</h2>
-
-<p
-id="total"
-class="preco">
-R$ 1,00
-</p>
-
-</div>
-
-<div class="pix">
-
-<h2>💳 Pagamento via Pix</h2>
-
-<p style="margin-top:15px;">
-Chave Pix:
-</p>
-
-<h3 id="pix">
-47609570818
-</h3>
-
-<div
-class="botao"
-onclick="copiarPix()">
-
-📋 Copiar Pix
-
-</div>
-
-<div class="aviso">
-
-✅ Após realizar o Pix, entre em contato pelo WhatsApp para<script>
-
-function calcular(){
-
-const select = document.getElementById("item");
-
-const preco = Number(
-select.options[select.selectedIndex].dataset.preco
-);
-
-const quantidade = Number(
-document.getElementById("quantidade").value
-);
-
-const total = preco * quantidade;
-
-document.getElementById("total").innerHTML =
-"R$ " + total.toFixed(2).replace(".",",");
+    },5000);
 
 }
 
-function copiarPix(){
 
-const pix = "47609570818";
+setInterval(()=>{
 
-navigator.clipboard.writeText(pix);
+    if(jogando){
 
-alert("✅ Chave Pix copiada!");
+        criarPredio();
 
-}
+    }
 
-function enviarPedido(){
+},800);
 
-const select = document.getElementById("item");
-
-const item = select.value;
-
-const preco = Number(
-select.options[select.selectedIndex].dataset.preco
-);
-
-const quantidade = Number(
-document.getElementById("quantidade").value
-);
-
-const total = preco * quantidade;
-
-const mensagem =
-"🌱 *NOVO PEDIDO*%0A%0A"+
-"🎮 Item: "+item+"%0A"+
-"📦 Quantidade: "+quantidade+"%0A"+
-"💰 Total: R$ "+total.toFixed(2).replace(".",",")+"%0A%0A"+
-"Olá! Acabei de realizar o Pix e gostaria de confirmar meu pedido.";
-
-window.open(
-"https://wa.me/5517996377365?text="+mensagem,
-"_blank"
-);
-
-}
-
-calcular();
-
-</script><div class="card">
-
-<h2 style="color:#4ade80;">⭐ Por que comprar conosco?</h2>
-
-<p style="margin-top:15px;line-height:30px;font-size:18px;">
-
-✅ Entrega rápida.<br>
-✅ Atendimento pelo WhatsApp.<br>
-✅ Pagamento via Pix.<br>
-✅ Itens para Grow A Garden 2.<br>
-✅ Suporte caso tenha dúvidas.
-
-</p>
-
+</script><div id="gameover">
+    <h1>GAME OVER</h1>
+    <p id="finalScore"></p>
+    <button onclick="location.reload()">JOGAR NOVAMENTE</button>
 </div>
 
-<div class="card">
+<style>
 
-<h2 style="color:#facc15;">📢 Informações Importantes</h2>
+#gameover{
+    display:none;
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.8);
+    color:white;
+    z-index:50;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+}
 
-<p style="margin-top:15px;line-height:30px;font-size:18px;">
+#gameover h1{
+    font-size:50px;
+}
 
-💳 Faça o Pix utilizando a chave exibida acima.<br><br>
+#gameover button{
+    margin-top:20px;
+    padding:15px 30px;
+    border:0;
+    border-radius:10px;
+    font-size:18px;
+}
 
-📱 Depois do pagamento, toque em
-<b>"Enviar Pedido no WhatsApp"</b> e envie o comprovante para agilizar a confirmação.<br><br>
-
-🌱 Assim que o pagamento for confirmado, entrarei em contato para combinar a entrega dos itens.
-
-</p>
-
-</div>
-
-<a
-class="whatsapp"
-href="https://wa.me/5517996377365"
-target="_blank">
-
-💬
-
-</a></div>
-
-<footer>
-
-<h2>🌱 Grow A Garden 2 Loja</h2>
-
-<p style="margin-top:10px;">
-Itens virtuais para Grow A Garden 2
-</p>
-
-<p style="margin-top:10px;">
-📱 WhatsApp: +55 17 99637-7365
-</p>
-
-<p style="margin-top:10px;">
-💳 Pix: 47609570818
-</p>
-
-<p style="margin-top:20px;color:#4ade80;">
-Obrigado pela preferência!
-</p>
-
-</footer>
-
-</body>
-</html>
+</style>alert("Fim de jogo! Pontos: "+score);
+location.reload();
