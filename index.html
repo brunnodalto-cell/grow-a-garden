@@ -1,12 +1,205 @@
-musica.mp3<audio id="musica" autoplay loop>
-  <source src="musica.mp3" type="audio/mpeg">
-</audio>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Grow A Garden 2 - Loja</title>
+
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#111;
+color:white;
+margin:0;
+}
+
+header{
+background:linear-gradient(90deg,#00ff88,#00aaff);
+padding:30px;
+text-align:center;
+font-size:35px;
+font-weight:bold;
+}
+
+h2{
+text-align:center;
+}
+
+.produtos{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+text-align:center;
+box-shadow:0 0 20px #00ff88;
+}
+
+button{
+padding:15px;
+border:none;
+border-radius:10px;
+background:#00ff88;
+font-size:18px;
+cursor:pointer;
+width:100%;
+font-weight:bold;
+}
+
+button:hover{
+background:#00cc66;
+}
+
+#compra{
+display:none;
+background:#1a1a1a;
+padding:20px;
+margin:20px;
+border-radius:15px;
+text-align:center;
+}
+
+.pix{
+font-size:22px;
+color:#00ff88;
+font-weight:bold;
+}
+
+.whats{
+display:block;
+background:#25D366;
+color:white;
+text-decoration:none;
+padding:20px;
+font-size:25px;
+border-radius:15px;
+margin-top:20px;
+font-weight:bold;
+}
+
+footer{
+text-align:center;
+padding:30px;
+color:#aaa;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+🌱 GROW A GARDEN 2 🌱
+</header>
+
+<h2>Itens Disponíveis</h2>
+
+<div class="produtos">
+
+<div class="card">
+<h3>Moon Bloom</h3>
+<p>R$1,00</p>
+<button onclick="comprar('Moon Bloom',1)">Comprar</button>
+</div>
+
+<div class="card">
+<h3>Sun Bloom</h3>
+<p>R$2,00</p>
+<button onclick="comprar('Sun Bloom',2)">Comprar</button>
+</div>
+
+<div class="card">
+<h3>Dragon Breath</h3>
+<p>R$1,00</p>
+<button onclick="comprar('Dragon Breath',1)">Comprar</button>
+</div>
+
+<div class="card">
+<h3>Star Fruit</h3>
+<p>R$4,00</p>
+<button onclick="comprar('Star Fruit',4)">Comprar</button>
+</div>
+
+<div class="card">
+<h3>Ghost Pepper</h3>
+<p>R$1,00</p>
+<button onclick="comprar('Ghost Pepper',1)">Comprar</button>
+</div>
+
+<div class="card">
+<h3>Hypno Bloom</h3>
+<p>R$1,00</p>
+<button onclick="comprar('Hypno Bloom',1)">Comprar</button>
+</div>
+
+<div class="card">
+<h3>1000 Bamboo</h3>
+<p>R$1,00</p>
+<button onclick="comprar('1000 Bamboo',1)">Comprar</button>
+</div>
+
+<div class="card">
+<h3>Pet Racoon</h3>
+<p>R$8,00</p>
+<button onclick="comprar('Pet Racoon',8)">Comprar</button>
+</div>
+
+</div>
+
+<div id="compra">
+
+<h2 id="produto"></h2>
+
+<h1>Total: R$ <span id="valor"></span></h1>
+
+<h3>Faça o pagamento via PIX</h3>
+
+<div class="pix">
+COLE SUA CHAVE PIX AQUI
+</div>
+
+<p>Depois do pagamento clique no botão abaixo.</p>
+
+<a class="whats" id="zap" target="_blank">
+✅ JÁ PAGUEI - ENTRAR EM CONTATO
+</a>
+
+</div>
+
+<footer>
+
+WhatsApp:<br>
+
++55 17 99637-7365
+
+</footer>
 
 <script>
-const audio = document.getElementById("musica");
-audio.volume = 0.3;
 
-document.addEventListener("click", function(){
-  audio.play();
+function comprar(produto,valor){
+
+document.getElementById("compra").style.display="block";
+
+document.getElementById("produto").innerHTML=produto;
+
+document.getElementById("valor").innerHTML=valor.toFixed(2);
+
+let mensagem="Olá! Já paguei pelo "+produto+" no valor de R$"+valor+".";
+document.getElementById("zap").href="https://wa.me/5517996377365?text="+encodeURIComponent(mensagem);
+
+window.scrollTo({
+top:document.body.scrollHeight,
+behavior:"smooth"
 });
+
+}
+
 </script>
+
+</body>
+</html>
